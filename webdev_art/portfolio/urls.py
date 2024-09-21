@@ -24,5 +24,9 @@ urlpatterns = [
     # Password change
     path('password_change/', auth_views.PasswordChangeView.as_view(), name='password_change'),
     path('password_change_done/', auth_views.PasswordChangeDoneView.as_view(), name='password_change_done'),
+
+
+    #proflie
+
 ]
 
