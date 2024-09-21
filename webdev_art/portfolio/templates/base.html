@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+    <title>Portfolio Gallery</title>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="{% url 'profile' %}">Profile</a></li>
+            <li><a href="{% url 'submit_image' %}">Submit Image</a></li>
+            <li><a href="{% url 'work_gallery' %}">Work Image Gallery</a></li>
+            <li><a href="{% url 'information' %}">Information</a></li>
+        </ul>
+    </nav>
+
+    <div>
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>

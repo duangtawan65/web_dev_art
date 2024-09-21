@@ -133,7 +133,6 @@ EMAIL_HOST_PASSWORD = 'your-email-password'
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
 
-
 #ตั้งค่าให้ Django รองรับการอัปโหลดไฟล์มีเดีย
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

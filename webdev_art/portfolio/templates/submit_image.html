@@ -1,10 +1,9 @@
 {% extends "base.html" %}
-
 {% block content %}
-  <h2>เพิ่มภาพใน Portfolio ของคุณ</h2>
+  <h2>Submit Work Image</h2>
   <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">บันทึก</button>
+    <button type="submit">Submit</button>
   </form>
 {% endblock %}

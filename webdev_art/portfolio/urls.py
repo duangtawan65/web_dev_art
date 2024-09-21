@@ -6,6 +6,7 @@ from portfolio.views import *
 from django.conf import settings
 from django.conf.urls.static import static
 
+
 urlpatterns = [
 
     path('', home_view, name='home'),
@@ -27,6 +28,10 @@ urlpatterns = [
 
 
     #proflie
+    path('profile/', profile_view, name='profile'),
+    path('submit_image/', submit_image_view, name='submit_image'),
+    path('work_gallery/', work_gallery_view, name='work_gallery'),
+    path('information/', information_view, name='information'),
 
-]
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
