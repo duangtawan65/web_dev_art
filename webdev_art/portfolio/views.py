@@ -1,26 +1,31 @@
-from django.shortcuts import render,redirect
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import TemplateView
-from django.contrib.auth.forms import UserCreationForm
+from django.shortcuts import render, redirect
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.views import LogoutView
+from django.shortcuts import render, redirect
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.views import LogoutView
 
-# Create your views here.
-@login_required
-def dashboard(request):
-    return render(request, 'dashboard.html')
-
-
-class DashboardView(LoginRequiredMixin, TemplateView):
-    template_name = 'dashboard.html'
+# Home view
+def home_view(request):
+   return render(request, 'home.html')
 
 
-def register(request):
+def register_view(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('login')
+            user = form.save()
+            login(request, user)
+            return redirect('home')
     else:
         form = UserCreationForm()
-    return render(request, 'register.html', {'form': form})
+
+    return render(request, 'registration/register.html',{'form':form})
+
+class CustomLogoutView(LogoutView):
+    def get(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)
+
+
