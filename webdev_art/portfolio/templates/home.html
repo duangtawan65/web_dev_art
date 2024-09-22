@@ -2,22 +2,47 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width-device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home Page</title>
+    <script src="//unpkg.com/alpinejs" defer></script>
 </head>
-<body>
+<body x-data="navigation" style="background-color: black; color: white;">
 
+    <!-- Menu Button -->
+    <button class="gMenuBtn menuBtn" type="button" @click="toggleMenu">
+        <div class="menuBtn_inner flex">
+            <div class="icon flex"></div>
+            <div class="text" x-text="isOpen ? 'CLOSE' : 'MENU'"></div>
+        </div>
+    </button>
+
+    <!-- Menu Navigation -->
+    <nav class="siteNavi" x-show="isOpen" x-transition>
+        <div class="siteNavi_title">
+            <div class="line1">SOLANI</div>
+            <div class="line2">ILLUSTRATION</div>
+            <div class="line3">PORTFOLIO</div>
+        </div>
+
+        <ol class="siteNavi_pages">
+            <li><a href="profile/">Profile</a></li>
+            <li><a href="submit_image/">Submit Project</a></li>
+            <li><a href="work_gallery/">Artworks</a></li>
+            <li><a href="information/">Info</a></li>
+        </ol>
+    </nav>
+
+    <!-- Main Content -->
     <h1>Welcome to the Home Page!</h1>
 
     {% if user.is_authenticated %}
         <p>Hello, {{ user.username }}! You are logged in.</p>
-        <form method = "post" action="{% url 'logout' %}">
+        <form method="post" action="{% url 'logout' %}">
             {% csrf_token %}
             <button type="submit">Logout</button>
         </form>
     {% else %}
-
-        <a herf="{% url 'login'%}">
+        <a href="{% url 'login' %}">
             <button>Login</button>
         </a>
 
@@ -25,5 +50,20 @@
             <button>Register</button>
         </a>
     {% endif %}
+
+    <script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('navigation', () => ({
+            isOpen: false,
+            toggleMenu() {
+                this.isOpen = !this.isOpen;
+            },
+            closeMenu() {
+                this.isOpen = false;
+            }
+        }));
+    });
+    </script>
+
 </body>
 </html>
