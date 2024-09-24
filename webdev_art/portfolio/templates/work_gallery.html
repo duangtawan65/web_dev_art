@@ -1,11 +1,13 @@
-{% extends 'quiz/base.html' %}
+{% extends "base.html" %}
 
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-
-</body>
-</html>
+{% block main %}
+  <h2>Work Gallery</h2>
+  <div>
+    {% for image in images %}
+      <div>
+        <h3>{{ image.title }}</h3>
+        <img src="{{ image.image.url }}" alt="{{ image.title }}" style="max-width:300px;">
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}

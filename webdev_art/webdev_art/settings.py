@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-frk5pm8t@hyfh20h1yx1#^4dbw^w*pd+(h-qy+*cvbh65uus5g
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['3731-202-28-206-18.ngrok-free.app', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['6049-202-28-206-18.ngrok-free.app', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -59,7 +59,7 @@ ROOT_URLCONF = "webdev_art.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [os.path.join(BASE_DIR, "templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -135,7 +135,7 @@ EMAIL_HOST_USER = 'your-email@gmail.com'
 EMAIL_HOST_PASSWORD = 'your-email-password'
 
 LOGIN_REDIRECT_URL = 'home'
-LOGOUT_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'login'
 
 #ตั้งค่าให้ Django รองรับการอัปโหลดไฟล์มีเดีย
 MEDIA_URL = '/media/'
@@ -144,3 +144,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 TAILWIND_APP_NAME = 'theme'
 NPM_BIN_PATH = "C:/Program Files/nodejs/npm.cmd"
+
+CSRF_TRUSTED_ORIGINS = ['https://6049-202-28-206-18.ngrok-free.app']

@@ -17,12 +17,14 @@ class UserProfile(models.Model):
 
 class WorkImage(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='work_images/')
     title = models.CharField(max_length=100)
-    description = models.TextField(blank=True, null=True)
+    image = models.ImageField(upload_to='uploads/')
+    description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.title
+
+
 
 

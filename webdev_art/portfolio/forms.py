@@ -13,3 +13,4 @@ class WorkImageForm(forms.ModelForm):
     class Meta:
         model = WorkImage
         fields = ['image', 'title', 'description']
+
