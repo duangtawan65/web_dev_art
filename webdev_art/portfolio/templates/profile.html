@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block main %}
+<div class="h-screen flex justify-center items-center bg-gray-100 text-black">
+  <div class="bg-white shadow-lg rounded-lg p-8 max-w-md w-full">
+    <h2 class="text-2xl font-semibold text-center mb-6">Profile</h2>
+
+    <!-- ข้อมูลผู้ใช้ -->
+    <p><strong>Username:</strong> {{ user.username }}</p>
+    <p><strong>Email:</strong> {{ user.email }}</p>
+
+    <!-- ตรวจสอบโปรไฟล์ -->
+    {% if profile %}
+      <p><strong>Quote:</strong> {{ profile.quote }}</p>
+      <p><strong>Facebook:</strong> <a href="{{ profile.facebook_url }}">{{ profile.facebook_url }}</a></p>
+      <p><strong>X:</strong> <a href="{{ profile.X_url }}">{{ profile.X_url }}</a></p>
+      <p><strong>Instagram:</strong> <a href="{{ profile.instagram_url }}">{{ profile.instagram_url }}</a></p>
+    {% else %}
+      <p>ไม่มีข้อมูลโปรไฟล์</p>
+    {% endif %}
+
+    <!-- ปุ่มแก้ไขโปรไฟล์ -->
+    <a href="{% url 'edit_profile' %}" class="block mt-4 py-2 px-4 bg-blue-600 text-white text-center font-semibold rounded-lg hover:bg-blue-700">
+      Editprofile
+    </a>
+  </div>
+</div>
+{% endblock %}

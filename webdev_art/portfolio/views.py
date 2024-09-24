@@ -20,10 +20,13 @@ def register_view(request):
             user = form.save()
             login(request, user)
             return redirect('home')
+        else:
+            print(form.errors)  # ดูข้อผิดพลาดที่เกิดขึ้น
     else:
         form = UserCreationForm()
 
-    return render(request, 'registration/register.html',{'form':form})
+    return render(request, 'registration/register.html', {'form': form})
+
 
 class CustomLogoutView(LogoutView):
     def get(self, request, *args, **kwargs):
@@ -47,22 +50,14 @@ def work_gallery_view(request):
     return render(request, 'work_gallery.html', {'images': images})
 
 
+
+
 @login_required
 def profile_view(request):
-    try:
-        profile = request.user.userprofile
-    except UserProfile.DoesNotExist:
-        profile = None
+    # Ensure a UserProfile exists for the user
+    profile, created = UserProfile.objects.get_or_create(user=request.user)
 
-    if request.method == 'POST':
-        form = UserProfileForm(request.POST, instance=profile)
-        if form.is_valid():
-            form.save()
-            return redirect('home')
-    else:
-        form = UserProfileForm(instance=profile)
-
-    return render(request, 'profile.html', {'form': form})
+    return render(request, 'profile.html', {'profile': profile})
 
 def profile_edit_view(request):
     user = request.user  # ข้อมูลของผู้ใช้งานปัจจุบัน

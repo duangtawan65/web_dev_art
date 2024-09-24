@@ -30,6 +30,7 @@ urlpatterns = [
 
     #proflie
     path('profile/', profile_view, name='profile'),
+    path('profile/edit/', profile_edit_view, name='edit_profile'),
     path('submit_image/', submit_image_view, name='submit_image'),
     path('work_gallery/', work_gallery_view, name='work_gallery'),
     path('information/', information_view, name='information'),
