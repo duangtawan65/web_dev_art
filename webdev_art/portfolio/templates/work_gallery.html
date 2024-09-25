@@ -3,7 +3,7 @@
 {% block main %}
   <h2>Work Gallery</h2>
   <div>
-    {% for image in images %}
+    {% for image in work_images %}
       <div>
         <h3>{{ image.title }}</h3>
         <img src="{{ image.image.url }}" alt="{{ image.title }}" style="max-width:300px;">

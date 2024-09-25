@@ -1,9 +1,69 @@
 {% extends "base.html" %}
 {% block main %}
-  <h2>Submit Work Image</h2>
-  <form method="POST" enctype="multipart/form-data">
+<div class="grid grid-cols-2 gap-6 h-screen p-10">
+    <style>
+        .wipe-animation img {
+            opacity: 0;
+            transform: translateY(100%);
+            transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+        }
+
+        .show-wipe img {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Optional: container to ensure no impact on image position */
+        #image-display {
+            position: relative;
+            overflow: hidden;
+        }
+    </style>
+
+    <!-- Image display area -->
+    <div class="relative" id="image-display">
+        <div class="wipe-animation">
+            <img src="" alt="Hover over a name to display the image" class="w-full h-auto" id="hovered-image">
+        </div>
+    </div>
+
+    <!-- List of images' names -->
+    <div>
+        <h2 class="text-4xl mb-4">Projects</h2>
+        <ul class="space-y-4 text-2xl">
+            {% for image in work_images %}
+                <li>
+                    <a href="#" class="hover:underline hover:opacity-75"
+                       data-image="{{ image.image.url }}"
+                       onmouseover="showImage('{{ image.image.url }}')"
+                       onmouseout="hideImage()">
+                        {{ image.title }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<!-- Form for uploading new image -->
+<h2 class="text-4xl my-6">Submit New Work Image</h2>
+<form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Submit</button>
-  </form>
+    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Submit</button>
+</form>
+
+<script>
+    function showImage(imageUrl) {
+        const imageElement = document.getElementById('hovered-image');
+        imageElement.src = imageUrl;
+        const animationContainer = document.querySelector('.wipe-animation');
+        animationContainer.classList.add('show-wipe');
+    }
+
+    function hideImage() {
+        const animationContainer = document.querySelector('.wipe-animation');
+        animationContainer.classList.remove('show-wipe');
+    }
+</script>
 {% endblock %}

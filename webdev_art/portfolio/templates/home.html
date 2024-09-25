@@ -1,63 +1,103 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
+
+{% block main %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home Page</title>
     <script src="//unpkg.com/alpinejs" defer></script>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .slider {
+            display: flex;
+            overflow: hidden;
+            position: relative;
+            width: 100%;
+            height: 400px;
+        }
+
+        .slider-track {
+            display: flex;
+            transition: transform 0.05s ease-in-out;
+            cursor: pointer;
+        }
+
+        .slider img {
+            height: 100%;
+            flex-shrink: 0;
+            margin-right: 10px;
+            filter: grayscale(100%);
+            transition: filter 0.5s ease-in-out;
+        }
+
+        /* Hover effect for the image to transition from grayscale to RGB */
+        .slider img:hover {
+            filter: grayscale(0%);
+        }
+
+        .wipe-animation {
+            position: relative;
+            display: inline-block;
+            overflow: hidden;
+        }
+
+        .wipe-animation img {
+            position: relative;
+            z-index: 1;
+            transition: transform 0.1s ease-in-out, filter 0.1s ease-in-out;
+        }
+
+        .wipe-animation::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #4CAF50;
+            transform: translateX(-100%);
+            transition: transform 0.5s ease-in-out;
+            z-index: 2;
+        }
+
+        .wipe-animation:hover::before {
+            transform: translateX(100%);
+        }
+    </style>
 </head>
-<body x-data="{ isOpen: false }" class="bg-black text-white h-screen font-cardinal">
+<body class="bg-black text-white h-screen font-cardinal">
 
-     <!-- Menu Button -->
-    <button @click="isOpen = !isOpen" class="gMenuBtn transform -rotate-90 fixed bottom-4 left-4 text-white font-bold z-20">
-        <div class="flex items-center">
-            <div class="text" x-text="isOpen ? 'CLOSE' : 'MENU'"></div>
-        </div>
-    </button>
-
-    <!-- Menu Navigation -->
-<div x-show="isOpen" x-transition:enter="transition-opacity ease-out duration-300"
-     x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-     x-transition:leave="transition-opacity ease-in duration-200"
-     x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-     class="fixed inset-0 z-10 bg-black text-white p-10">
-
-    <div class="mb-8">
-        <div class="text-5xl font-serif">SOLANI</div>
-        <div class="text-3xl font-serif">ILLUSTRATION</div>
-        <div class="text-2xl font-serif">PORTFOLIO</div>
-    </div>
-
-    <ol class="space-y-8 text-4xl">
-        <li><a href="profile/" class="hover:opacity-75">A. Profile</a></li>
-        <li><a href="submit_image/" class="hover:opacity-75">B. PROJECT SUBMIT</a></li>
-        <li><a href="work_gallery/" class="hover:opacity-75">C. ARTWORKS</a></li>
-        <li><a href="information/" class="hover:opacity-75">D. INFO</a></li>
-    </ol>
-
-    {% if user.is_authenticated %}
-        <form method="post" action="{% url 'logout' %}" class="mt-8">
-            {% csrf_token %}
-            <button type="submit" class=" text-white py-2 px-4 rounded">Logout</button>
-        </form>
-    {% endif %}
-
-    <p class="absolute bottom-20 left-10 text-gray-500 text-sm">
-        Reproduction or modification of the content is prohibited.
-    </p>
-</div>
-
-    <!-- Main Content -->
     <h1 class="text-3xl p-6">Welcome to the Home Page!</h1>
 
     {% if user.is_authenticated %}
         <p class="p-6">Hello, {{ user.username }}! You are logged in.</p>
+
+        <!-- Gallery Slider -->
+        <div class="slider" onmousemove="moveSlider(event)">
+            <div class="slider-track">
+                {% for image in work_images %}
+                    <img src="{{ image.image.url }}" alt="{{ image.title }}" class="object-cover">
+                {% endfor %}
+            </div>
+        </div>
 
     {% else %}
         <a href="{% url 'login' %}" class="bg-green-500 text-white py-2 px-4 rounded m-6">Login</a>
         <a href="{% url 'register' %}" class="bg-blue-500 text-white py-2 px-4 rounded">Register</a>
     {% endif %}
 
+    <script>
+        const track = document.querySelector('.slider-track');
+
+        function moveSlider(event) {
+            const slider = document.querySelector('.slider');
+            const rect = slider.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const movePercent = x / slider.clientWidth;
+            const moveMax = track.scrollWidth - slider.clientWidth;
+            track.style.transform = `translateX(-${moveMax * movePercent}px)`;
+        }
+    </script>
+
 </body>
-</html>
+{% endblock %}

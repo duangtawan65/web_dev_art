@@ -10,7 +10,8 @@ from .models import UserProfile
 
 # Home view
 def home_view(request):
-   return render(request, 'home.html')
+    work_images = WorkImage.objects.filter(user=request.user)
+    return render(request, 'home.html', {'work_images': work_images})
 
 
 def register_view(request):
@@ -33,32 +34,38 @@ class CustomLogoutView(LogoutView):
         return self.post(request, *args, **kwargs)
 
 
-@login_required
+@login_required(login_url='login')
 def submit_image_view(request):
     if request.method == 'POST':
         form = WorkImageForm(request.POST, request.FILES)
         if form.is_valid():
-            image = form.save(commit=False)  # Don't save to the DB yet
-            image.user = request.user  # Assign the current logged-in user
-            image.save()  # Now save it to the DB
-            return redirect('work_gallery')
+            image = form.save(commit=False)
+            image.user = request.user
+            image.save()
+            return redirect('work_gallery')  # Redirect to work_gallery after successful submission
     else:
         form = WorkImageForm()
-    return render(request, 'submit_image.html', {'form': form})
-def work_gallery_view(request):
+
+    # Pass uploaded images for display
     images = WorkImage.objects.filter(user=request.user)
-    return render(request, 'work_gallery.html', {'images': images})
+    return render(request, 'submit_image.html', {'form': form, 'work_images': images})
+
+
+@login_required(login_url='login')
+def work_gallery_view(request):
+    work_images = WorkImage.objects.filter(user=request.user)
+    return render(request, 'work_gallery.html', {'work_images': work_images})
 
 
 
-
-@login_required
+@login_required(login_url='login')
 def profile_view(request):
     # Ensure a UserProfile exists for the user
     profile, created = UserProfile.objects.get_or_create(user=request.user)
 
     return render(request, 'profile.html', {'profile': profile})
 
+@login_required(login_url='login')
 def profile_edit_view(request):
     user = request.user  # ข้อมูลของผู้ใช้งานปัจจุบัน
     try:
