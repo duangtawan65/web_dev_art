@@ -1,31 +1,35 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, authenticate
-from django.contrib.auth.views import LogoutView
+from django.contrib.auth.views import LogoutView, PasswordResetDoneView
 from .models import UserProfile, WorkImage
 from .forms import UserProfileForm, WorkImageForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .models import UserProfile
+from .forms import CustomUserCreationForm
 
 # Home view
 def home_view(request):
-    work_images = WorkImage.objects.filter(user=request.user)
+    if request.user.is_authenticated:
+        work_images = WorkImage.objects.filter(user=request.user)
+    else:
+        work_images = []  # Empty list or default images for anonymous users
+
     return render(request, 'home.html', {'work_images': work_images})
 
 
 def register_view(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save()
+            user = form.save(commit=False)
+            user.email = form.cleaned_data.get('email')
+            user.save()
             login(request, user)
             return redirect('home')
-        else:
-            print(form.errors)  # ดูข้อผิดพลาดที่เกิดขึ้น
     else:
-        form = UserCreationForm()
-
+        form = CustomUserCreationForm()
     return render(request, 'registration/register.html', {'form': form})
 
 
@@ -65,29 +69,35 @@ def profile_view(request):
 
     return render(request, 'profile.html', {'profile': profile})
 
+
 @login_required(login_url='login')
 def profile_edit_view(request):
-    user = request.user  # ข้อมูลของผู้ใช้งานปัจจุบัน
-    try:
-        profile = user.userprofile  # ตรวจสอบว่าผู้ใช้มีโปรไฟล์หรือไม่
-    except UserProfile.DoesNotExist:
-        profile = None
+    user = request.user
+    profile, created = UserProfile.objects.get_or_create(user=user)
 
     if request.method == 'POST':
-        # อัปเดตข้อมูลโปรไฟล์
+        # Handle both User and UserProfile updates
         user_form = UserProfileForm(request.POST, instance=profile)
         if user_form.is_valid():
+            # Update User model fields (username, email)
+            user.username = user_form.cleaned_data['username']
+            user.email = user_form.cleaned_data['email']
+            user.save()  # Save changes to User model
+
+            # Save changes to UserProfile model
             user_form.save()
             return redirect('profile')
     else:
-        user_form = UserProfileForm(instance=profile)
+        # Prepopulate form with both User and UserProfile data
+        initial_data = {'username': user.username, 'email': user.email}
+        user_form = UserProfileForm(instance=profile, initial=initial_data)
 
-    # แสดงฟอร์มพร้อมกับข้อมูลของผู้ใช้
     return render(request, 'profile_edit.html', {
-        'user_form': user_form,
-        'user': user,  # ข้อมูลผู้ใช้ เช่น username, email
+        'form': user_form,
     })
+
 
 # Information view
 def information_view(request):
     return render(request, 'information.html')
+

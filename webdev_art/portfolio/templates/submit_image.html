@@ -2,29 +2,48 @@
 {% block main %}
 <div class="grid grid-cols-2 gap-6 h-screen p-10">
     <style>
-        .wipe-animation img {
-            opacity: 0;
-            transform: translateY(100%);
-            transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
-        }
-
-        .show-wipe img {
-            transform: translateY(0);
-            opacity: 1;
-        }
-
-        /* Optional: container to ensure no impact on image position */
-        #image-display {
+        .image-container {
             position: relative;
+            height: 400px;
+            width: 100%;
             overflow: hidden;
+        }
+
+        .image-container img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: clip-path 0.5s ease-in-out, opacity 0.5s ease-in-out;
+            clip-path: inset(100% 0 0 0); /* Wipe animation starts from bottom */
+        }
+
+        .image-container img.show {
+            opacity: 1;
+            clip-path: inset(0 0 0 0); /* Wipe up when showing */
+        }
+
+        /* Hover area to increase interaction space */
+        .hover-area {
+            position: relative;
+            padding: 20px;
+            display: inline-block;
+            background-color: transparent;
+            cursor: pointer;
+        }
+
+        .hover-area:hover {
+            background-color: rgba(255, 255, 255, 0.1);
         }
     </style>
 
     <!-- Image display area -->
-    <div class="relative" id="image-display">
-        <div class="wipe-animation">
-            <img src="" alt="Hover over a name to display the image" class="w-full h-auto" id="hovered-image">
-        </div>
+    <div class="image-container" id="image-display">
+        <img src="" alt="Hover over a name to display the image" class="fade-image" id="image1">
+        <img src="" alt="Hover over a name to display the image" class="fade-image" id="image2">
     </div>
 
     <!-- List of images' names -->
@@ -33,10 +52,8 @@
         <ul class="space-y-4 text-2xl">
             {% for image in work_images %}
                 <li>
-                    <a href="#" class="hover:underline hover:opacity-75"
-                       data-image="{{ image.image.url }}"
-                       onmouseover="showImage('{{ image.image.url }}')"
-                       onmouseout="hideImage()">
+                    <a href="#" class="hover-area"
+                       onmouseover="showImage('{{ image.image.url }}')">
                         {{ image.title }}
                     </a>
                 </li>
@@ -54,16 +71,19 @@
 </form>
 
 <script>
-    function showImage(imageUrl) {
-        const imageElement = document.getElementById('hovered-image');
-        imageElement.src = imageUrl;
-        const animationContainer = document.querySelector('.wipe-animation');
-        animationContainer.classList.add('show-wipe');
-    }
+    let currentImage = 1;
 
-    function hideImage() {
-        const animationContainer = document.querySelector('.wipe-animation');
-        animationContainer.classList.remove('show-wipe');
+    function showImage(imageUrl) {
+        const image1 = document.getElementById('image1');
+        const image2 = document.getElementById('image2');
+        const newImage = currentImage === 1 ? image2 : image1;
+        const oldImage = currentImage === 1 ? image1 : image2;
+
+        newImage.src = imageUrl;
+        newImage.classList.add('show');
+        oldImage.classList.remove('show');
+
+        currentImage = currentImage === 1 ? 2 : 1;
     }
 </script>
 {% endblock %}

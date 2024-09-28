@@ -87,17 +87,28 @@
     {% endif %}
 
     <script>
-        const track = document.querySelector('.slider-track');
+    let currentIndex = 0;
+    const images = document.querySelectorAll('.next-preview img');
+    const currentImage = document.querySelector('#current-image img');
 
-        function moveSlider(event) {
-            const slider = document.querySelector('.slider');
-            const rect = slider.getBoundingClientRect();
-            const x = event.clientX - rect.left;
-            const movePercent = x / slider.clientWidth;
-            const moveMax = track.scrollWidth - slider.clientWidth;
-            track.style.transform = `translateX(-${moveMax * movePercent}px)`;
+    function navigateToNextImage() {
+        currentIndex = (currentIndex + 1) % images.length;
+        currentImage.src = images[currentIndex].src;
+    }
+
+    // Enable horizontal scrolling with mouse wheel
+    const scrollContainer = document.getElementById('scrollContainer');
+
+    scrollContainer.addEventListener('wheel', function(event) {
+        if (event.deltaY > 0 || event.deltaX > 0) {
+            scrollContainer.scrollLeft += 500;
+        } else {
+            scrollContainer.scrollLeft -= 500;
         }
-    </script>
+        event.preventDefault();
+    });
+</script>
+
 
 </body>
 {% endblock %}
