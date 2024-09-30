@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block main %}
 <head>
     <meta charset="UTF-8">
@@ -8,6 +8,9 @@
     <script src="//unpkg.com/alpinejs" defer></script>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
+        body {
+            background: linear-gradient(135deg, #1e1e1e, #111);
+        }
         .slider {
             display: flex;
             overflow: hidden;
@@ -27,13 +30,15 @@
             flex-shrink: 0;
             margin-right: 10px;
             filter: grayscale(100%);
-            transition: filter 0.5s ease-in-out;
+            transition: filter 0.5s ease-in-out, transform 0.5s ease;
         }
 
-        /* Hover effect for the image to transition from grayscale to RGB */
         .slider img:hover {
             filter: grayscale(0%);
+            transform: scale(1.05);  /* ขยายภาพเล็กน้อยเมื่อ hover */
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.3);  /* เพิ่มเงา */
         }
+
 
         .wipe-animation {
             position: relative;
@@ -62,18 +67,85 @@
 
         .wipe-animation:hover::before {
             transform: translateX(100%);
+
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .main-title, .sub-title {
+            animation: fadeIn 1s ease-in-out;
         }
     </style>
 </head>
-<body class="bg-black text-white h-screen font-cardinal">
+<body class="bg-black text-black h-screen font-cardinal ">
 
-    <h1 class="text-3xl p-6">Welcome to the Home Page!</h1>
+    <h1 class="text-5xl p-6 font-bold bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-transparent bg-clip-text">ZA WA RU DO!</h1>
+
+    <!-- Add Search Bar -->
+    <form x-data="{ query: '', suggestions: [], showSuggestions: false }"
+          @click.away="showSuggestions = false"
+          method="GET" action="{% url 'profile' 'dummy_username' %}"
+          onsubmit="return searchProfile(this)" class="mt-4 relative">
+        <input type="text" name="search" placeholder="Search by username"
+               class="p-2 border border-gray-400 rounded-lg text-black"
+               x-model="query"
+               @input.debounce.300ms="if (query.length > 0) {
+                   fetch(`/autocomplete/?term=${query}`)
+                   .then(response => response.json())
+                   .then(data => { suggestions = data; showSuggestions = true; });
+               } else { showSuggestions = false; }"
+        >
+        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105">Search</button>
+
+        <!-- Display suggestions -->
+        <ul x-show="showSuggestions" class="absolute bg-white text-black rounded-lg mt-1 w-full">
+            <template x-for="suggestion in suggestions" :key="suggestion.label">
+                <li @click="query = suggestion.label; showSuggestions = false"
+                    class="p-2 cursor-pointer hover:bg-gray-200" x-text="suggestion.label"></li>
+            </template>
+        </ul>
+    </form>
+
+    <script>
+        function searchProfile(form) {
+            var username = form.search.value.trim();
+            if (username) {
+                form.action = form.action.replace('dummy_username', username);
+                return true;
+            }
+            return false;
+        }
+    </script>
+
+    <script>
+        function searchProfile(form) {
+            var username = form.search.value.trim();
+            if (username) {
+                form.action = form.action.replace('dummy_username', username);
+                return true;
+            }
+            return false;
+        }
+    </script>
 
     {% if user.is_authenticated %}
-        <p class="p-6">Hello, {{ user.username }}! You are logged in.</p>
+        <style>
+            .custom-spacing {
+                letter-spacing: -0.05em; /* Adjust this value as needed */
+            }
+        </style>
+
+        <div class="main-title text-7XL leading-none custom-spacing mt-8">
+            {{ user.username }}!
+        </div>
+        <div class="sub-title text-5XL p-6 py-0 px-1.5 leading-none custom-spacing">
+            Portfolio
+        </div>
 
         <!-- Gallery Slider -->
-        <div class="slider" onmousemove="moveSlider(event)">
+        <div class="slider py-5 " onmousemove="moveSlider(event)">
             <div class="slider-track">
                 {% for image in work_images %}
                     <img src="{{ image.image.url }}" alt="{{ image.title }}" class="object-cover">
@@ -107,8 +179,7 @@
         }
         event.preventDefault();
     });
-</script>
-
+    </script>
 
 </body>
 {% endblock %}

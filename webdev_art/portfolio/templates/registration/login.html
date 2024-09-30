@@ -22,9 +22,14 @@
 
             <!-- Submit Button -->
             <div>
-                <button type="submit" class="w-full py-2 px-4 bg-gray-800 text-white font-semibold rounded-lg hover:bg-gray-600 transition duration-200 ease-in-out">Login</button>
+                <button type="submit" class="w-full py-2 px-4 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition duration-200 ease-in-out">Login</button>
             </div>
         </form>
+
+        <!-- Forgot Password Link -->
+        <p class="text-center text-sm text-gray-400 mt-4">
+            <a href="{% url 'password_reset' %}" class="text-gray-300 hover:underline">Forgot Password?</a>
+        </p>
 
         <p class="text-center text-sm text-gray-400 mt-4">
             Don't have an account?

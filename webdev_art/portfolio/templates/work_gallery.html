@@ -5,8 +5,8 @@
 
     <!-- Fixed Title and Description on the left -->
     <div class="w-1/4 h-full flex flex-col justify-center items-center bg-black text-white fixed left-0 top-0 p-4">
-        <h1 class="text-5xl font-bold" id="imageTitle">Liberty</h1>
-        <p class="mt-2" id="imageDescription">First Album "Liberty" Jacket Illustration</p>
+        <h1 class="text-5xl font-bold" id="imageTitle">TITLE</h1>
+        <p class="mt-2" id="imageDescription">DESCRIBE YOUR BEST WORK</p>
     </div>
 
     <!-- Scrollable image gallery -->
@@ -55,12 +55,22 @@
 
 <!-- CSS for hiding the scrollbar -->
 <style>
-    /* Hide scrollbar for Chrome, Safari, and Opera */
+    /* Hide scrollbar for the sidebar (vertical scroll) in Chrome, Safari, and Opera */
+    .overflow-y-auto::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Hide scrollbar for the sidebar (vertical scroll) in IE, Edge, and Firefox */
+    .overflow-y-auto {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+    }
+
+    /* Existing rules to hide horizontal scrollbar for the gallery */
     #scrollContainer::-webkit-scrollbar {
         display: none;
     }
 
-    /* Hide scrollbar for IE, Edge, and Firefox */
     #scrollContainer {
         -ms-overflow-style: none;  /* IE and Edge */
         scrollbar-width: none;  /* Firefox */
@@ -76,6 +86,7 @@
         margin-left: 25%;
     }
 </style>
+
 
 <!-- Script to update the image title on hover, handle scrolling, and change image title automatically -->
 <script>

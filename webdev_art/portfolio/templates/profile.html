@@ -5,7 +5,7 @@
   <div class="max-w-4xl w-full mx-auto p-8">
 
     <!-- Header - Information -->
-    <h2 class="text-4xl font-bold mb-10 uppercase underline">INFORMATION</h2>
+    <h2 class="text-5xl font-bold mb-10  bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 text-transparent bg-clip-text uppercase">PROFILE</h2>
 
     <!-- Create grid for layout with updated content -->
     <div class="grid grid-cols-3 gap-10">
@@ -21,8 +21,8 @@
 
       <!-- Right Side (User Data from Database) -->
       <div class="col-span-2">
-        <p class="text-lg mb-8 leading-loose">{{ user.username }}</p>
-        <p class="text-lg mb-8 leading-loose">{{ user.email }}</p>
+        <p class="text-lg mb-8 leading-loose">{{ viewed_user.username }}</p>
+        <p class="text-lg mb-8 leading-loose">{{ viewed_user.email }}</p>
         <p class="text-lg mb-8 leading-loose">{{ profile.quote|default:"None" }}</p>
         <p class="text-lg mb-8 leading-loose">
           {% if profile.facebook_url %}
@@ -45,13 +45,45 @@
             None
           {% endif %}
         </p>
+
+        <!-- จำนวน Followers และ Following -->
+        <div class="mt-6 text-lg">
+          <span>{{ followers_count }} Followers</span> |
+          <span>{{ following_count }} Following</span>
+        </div>
       </div>
     </div>
 
-    <!-- Edit Profile Button -->
+    <!-- ปุ่ม Follow/Unfollow -->
+    {% if user != viewed_user %}
+      <div class="mt-8 text-center">
+        {% if is_following %}
+          <form method="post" action="{% url 'unfollow' viewed_user.username %}">
+            {% csrf_token %}
+            <button type="submit" class="py-2 px-4 bg-red-500 hover:bg-red-700 text-white font-semibold rounded-lg shadow-md">Unfollow</button>
+          </form>
+        {% else %}
+          <form method="post" action="{% url 'follow' viewed_user.username %}">
+            {% csrf_token %}
+            <button type="submit" class="py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md">Follow</button>
+          </form>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <!-- Edit Profile Button (แสดงเมื่อเป็นโปรไฟล์ของตัวเอง) -->
+    {% if user == viewed_user %}
+      <div class="mt-12 text-center">
+        <a href="{% url 'edit_profile' %}" class="py-3 px-6 bg-blue-500 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md">
+          Edit Profile
+        </a>
+      </div>
+    {% endif %}
+
+    <!-- ปุ่มชม Work Gallery -->
     <div class="mt-12 text-center">
-      <a href="{% url 'edit_profile' %}" class="py-3 px-6 bg-blue-500 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md mr-32">
-        Edit Profile
+      <a href="{% url 'work_gallery' username=viewed_user.username %}" class="py-3 px-6 bg-green-500 hover:bg-green-700 text-white font-semibold rounded-lg shadow-md">
+         Work Gallery
       </a>
     </div>
 

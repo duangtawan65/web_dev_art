@@ -4,9 +4,11 @@
     <style>
         .image-container {
             position: relative;
-            height: 400px;
+            height: 800px; /* Adjusted to fit more proportionately */
             width: 100%;
             overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
         .image-container img {
@@ -17,26 +19,51 @@
             height: 100%;
             object-fit: cover;
             opacity: 0;
-            transition: clip-path 0.5s ease-in-out, opacity 0.5s ease-in-out;
-            clip-path: inset(100% 0 0 0); /* Wipe animation starts from bottom */
+            transition: opacity 0.5s ease-in-out, clip-path 0.5s ease-in-out;
+            clip-path: inset(100% 0 0 0);
         }
 
         .image-container img.show {
             opacity: 1;
-            clip-path: inset(0 0 0 0); /* Wipe up when showing */
+            clip-path: inset(0 0 0 0);
         }
 
-        /* Hover area to increase interaction space */
+        /* Hover area styling for project list */
         .hover-area {
             position: relative;
-            padding: 20px;
+            padding: 12px 20px;
+            font-size: 1.5rem;
             display: inline-block;
             background-color: transparent;
             cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
         }
 
         .hover-area:hover {
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        /* Delete button styling */
+        .delete-button {
+
+            color: white;
+            font-weight: bold;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+
+
+        /* Adjusting list and spacing */
+        ul {
+            padding: 0;
+            list-style-type: none;
+        }
+
+        li {
+            margin: 10px 0;
         }
     </style>
 
@@ -46,16 +73,25 @@
         <img src="" alt="Hover over a name to display the image" class="fade-image" id="image2">
     </div>
 
-    <!-- List of images' names -->
+    <!-- List of images' names with delete button -->
     <div>
-        <h2 class="text-4xl mb-4">Projects</h2>
-        <ul class="space-y-4 text-2xl">
+        <h2 class="text-4xl mb-6 font-bold">Projects</h2>
+        <ul class="space-y-4 text-xl">
             {% for image in work_images %}
-                <li>
+                <li class="flex justify-between items-center">
                     <a href="#" class="hover-area"
                        onmouseover="showImage('{{ image.image.url }}')">
                         {{ image.title }}
                     </a>
+
+                    <!-- Form to delete the image -->
+                    <form method="POST" style="display:inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="delete_image" value="{{ image.id }}">
+                        <button type="submit" class="delete-button">
+                            Delete
+                        </button>
+                    </form>
                 </li>
             {% endfor %}
         </ul>
@@ -63,11 +99,35 @@
 </div>
 
 <!-- Form for uploading new image -->
-<h2 class="text-4xl my-6">Submit New Work Image</h2>
-<form method="POST" enctype="multipart/form-data">
+<h2 class="text-4xl font-bold my-8 text-center">Submit New Work Image</h2>
+
+<form method="POST" enctype="multipart/form-data" class="space-y-6 max-w-lg mx-auto">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Submit</button>
+
+    <!-- Image upload input -->
+    <div>
+        <label for="image" class="block text-lg font-medium mb-2">Image:</label>
+        <input type="file" name="image" id="image" class="block w-full text-sm text-gray-400 border border-gray-600 rounded-lg cursor-pointer focus:outline-none bg-gray-900 p-2">
+    </div>
+
+    <!-- Title input -->
+    <div>
+        <label for="title" class="block text-lg font-medium mb-2">Title:</label>
+        <input type="text" name="title" id="title" class="block w-full text-sm bg-gray-900 text-white border border-gray-600 rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500">
+    </div>
+
+    <!-- Description input -->
+    <div>
+        <label for="description" class="block text-lg font-medium mb-2">Description:</label>
+        <textarea name="description" id="description" rows="5" class="block w-full text-sm bg-gray-900 text-white border border-gray-600 rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+    </div>
+
+    <!-- Submit button -->
+    <div class="text-center">
+        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75">
+            Submit
+        </button>
+    </div>
 </form>
 
 <script>

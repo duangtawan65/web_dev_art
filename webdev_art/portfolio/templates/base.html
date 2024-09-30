@@ -14,7 +14,7 @@
         }
     </style>
 </head>
-<body class="bg-black text-white" x-data="{ isOpen: false }">
+<body class="bg-black text-white" x-data="{ isOpen: false } ">
 
     <!-- Menu Button -->
     <button @click="isOpen = !isOpen" class="gMenuBtn transform -rotate-90 fixed bottom-4 left-4 text-white font-bold z-20">
@@ -30,30 +30,29 @@
          x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
          class="fixed inset-0 z-10 bg-black text-white p-10">
         <div class="mb-8">
-            <div class="text-5xl font-serif">SOLANI</div>
-            <div class="text-3xl font-serif">ILLUSTRATION</div>
-            <div class="text-2xl font-serif">PORTFOLIO</div>
+            <div class="text-5xl font-serif">{{ user.username }}</div>
+            <div class="text-3xl  font-serif ml-4">ILLUSTRATION</div>
+            <div class="text-3xl font-serif ml-24 ">PORTFOLIO</div>
         </div>
 
         <ol class="space-y-8 text-4xl">
-    <li><a href="{% url 'home' %}" class="hover:opacity-75">A. Home</a></li>
-    <li><a href="{% url 'profile' %}" class="hover:opacity-75">B. Profile</a></li>
+    <li><a href="{% url 'home' %}" class="hover:opacity-75">A. HOME</a></li>
+    <li><a href="{% url 'profile' %}" class="hover:opacity-75">B. PROFILE</a></li>
     <li><a href="{% url 'submit_image' %}" class="hover:opacity-75">C. PROJECT SUBMIT</a></li>
-    <li><a href="{% url 'work_gallery' %}" class="hover:opacity-75">D. ARTWORKS</a></li>
-    <li><a href="{% url 'information' %}" class="hover:opacity-75">E. INFO</a></li>
+    {% if user.is_authenticated %}
+        <li><a href="{% url 'work_gallery' username=user.username %}" class="hover:opacity-75">D. ARTWORKS</a></li>
+    {% endif %}
         </ol>
 
 
         {% if user.is_authenticated %}
             <form method="post" action="{% url 'logout' %}" class="mt-8">
                 {% csrf_token %}
-                <button type="submit" class=" text-white py-2 px-4 rounded">Logout</button>
+                <button type="submit" class=" text-white py-2 px-4 rounded text-2xl">Logout</button>
             </form>
         {% endif %}
 
-        <p class="absolute bottom-20 left-10 text-gray-500 text-sm">
-            Reproduction or modification of the content is prohibited.
-        </p>
+
     </div>
 
     <!-- Page Content Block -->

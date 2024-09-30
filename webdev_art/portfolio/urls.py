@@ -1,6 +1,6 @@
 # In your `urls.py`
 from django.urls import path
-from .views import home_view, register_view, submit_image_view, work_gallery_view, information_view, profile_view, profile_edit_view
+from .views import *
 from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
@@ -31,9 +31,15 @@ urlpatterns = [
     #proflie
     path('profile/', profile_view, name='profile'),
     path('profile/edit/', profile_edit_view, name='edit_profile'),
+    path('profile/<str:username>/', profile_view, name='profile'),
     path('submit_image/', submit_image_view, name='submit_image'),
-    path('work_gallery/', work_gallery_view, name='work_gallery'),
-    path('information/', information_view, name='information'),
+    path('work_gallery/<str:username>/', work_gallery_view, name='work_gallery'),
+    path('search_work_gallery/', search_work_gallery_view, name='search_work_gallery'),
+    path('autocomplete/', username_autocomplete, name='username_autocomplete'),
+
+    #follower
+    path('follow/<str:username>/', follow_user, name='follow'),
+    path('unfollow/<str:username>/', unfollow_user, name='unfollow'),
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
