@@ -11,7 +11,7 @@ class UserProfileForm(forms.ModelForm):
 
     class Meta:
         model = UserProfile
-        fields = ['username', 'email', 'quote', 'facebook_url', 'X_url', 'instagram_url']
+        fields = ['profile_picture','username', 'email', 'quote', 'facebook_url', 'X_url', 'instagram_url',]
 
 # Form for WorkImage
 class WorkImageForm(forms.ModelForm):

@@ -1,89 +1,102 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block main %}
 <div class="h-screen bg-black text-white">
   <div class="max-w-4xl w-full mx-auto p-8">
 
-    <!-- Header - Information -->
-    <h2 class="text-5xl font-bold mb-10  bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 text-transparent bg-clip-text uppercase">PROFILE</h2>
+    <!-- Header - Profile Title -->
+    <h2 class="text-5xl font-bold mb-10 bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 text-transparent bg-clip-text uppercase">Profile</h2>
 
-    <!-- Create grid for layout with updated content -->
-    <div class="grid grid-cols-3 gap-10">
-      <!-- Left Side (Field Titles) -->
-      <div>
-        <p class="text-xl mb-8 uppercase text-gray-500 leading-loose">Username</p>
-        <p class="text-xl mb-8 uppercase text-gray-500 leading-loose">Email</p>
-        <p class="text-xl mb-8 uppercase text-gray-500 leading-loose">Quote</p>
-        <p class="text-xl mb-8 uppercase text-gray-500 leading-loose">Facebook</p>
-        <p class="text-xl mb-8 uppercase text-gray-500 leading-loose">X</p>
-        <p class="text-xl mb-8 uppercase text-gray-500 leading-loose">Instagram</p>
+    <!-- Profile Image -->
+    <div class="text-center mb-10">
+      {% if profile.profile_picture %}
+        <div class="relative w-32 h-32 mx-auto mb-6">
+          <img src="{{ profile.profile_picture.url }}" alt="Profile Image" class="rounded-full w-full h-full object-cover border-4 border-blue-500 hover:scale-105 transition-transform duration-300">
+        </div>
+      {% else %}
+        <div class="relative w-32 h-32 mx-auto mb-6">
+          <img src="{% static 'theme/default_profile.png' %}" alt="Default Profile Image" class="rounded-full w-full h-full object-cover border-4 border-gray-500 hover:scale-105 transition-transform duration-300">
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Profile Information Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+      <!-- Field Titles -->
+      <div class="space-y-6">
+        <p class="text-xl uppercase text-gray-500 leading-loose border-b border-gray-600">Username</p>
+        <p class="text-xl uppercase text-gray-500 leading-loose border-b border-gray-600">Email</p>
+        <p class="text-xl uppercase text-gray-500 leading-loose border-b border-gray-600">Quote</p>
+        <p class="text-xl uppercase text-gray-500 leading-loose border-b border-gray-600">Facebook</p>
+        <p class="text-xl uppercase text-gray-500 leading-loose border-b border-gray-600">X</p>
+        <p class="text-xl uppercase text-gray-500 leading-loose border-b border-gray-600">Instagram</p>
       </div>
 
-      <!-- Right Side (User Data from Database) -->
-      <div class="col-span-2">
-        <p class="text-lg mb-8 leading-loose">{{ viewed_user.username }}</p>
-        <p class="text-lg mb-8 leading-loose">{{ viewed_user.email }}</p>
-        <p class="text-lg mb-8 leading-loose">{{ profile.quote|default:"None" }}</p>
-        <p class="text-lg mb-8 leading-loose">
+      <!-- User Information from Database -->
+      <div class="col-span-2 space-y-6">
+        <p class="text-xl leading-loose">{{ viewed_user.username }}</p>
+        <p class="text-xl leading-loose">{{ viewed_user.email }}</p>
+        <p class="text-xl leading-loose">{{ profile.quote|default:"None" }}</p>
+        <p class="text-xl leading-loose">
           {% if profile.facebook_url %}
-            <a href="{{ profile.facebook_url }}" class="underline">Facebook</a>
+            <a href="{{ profile.facebook_url }}" target="_blank" class="underline text-blue-400 hover:text-blue-300 transition duration-300">Facebook</a>
           {% else %}
             None
           {% endif %}
         </p>
-        <p class="text-lg mb-8 leading-loose">
+        <p class="text-xl leading-loose">
           {% if profile.X_url %}
-            <a href="{{ profile.X_url }}" class="underline">X</a>
+            <a href="{{ profile.X_url }}" target="_blank" class="underline text-blue-400 hover:text-blue-300 transition duration-300">X</a>
           {% else %}
             None
           {% endif %}
         </p>
-        <p class="text-lg mb-8 leading-loose">
+        <p class="text-xl leading-loose">
           {% if profile.instagram_url %}
-            <a href="{{ profile.instagram_url }}" class="underline">Instagram</a>
+            <a href="{{ profile.instagram_url }}" target="_blank" class="underline text-pink-400 hover:text-pink-300 transition duration-300">Instagram</a>
           {% else %}
             None
           {% endif %}
         </p>
 
-        <!-- จำนวน Followers และ Following -->
+        <!-- Followers and Following Counts -->
         <div class="mt-6 text-lg">
-          <span>{{ followers_count }} Followers</span> |
-          <span>{{ following_count }} Following</span>
+          <span class="font-bold">{{ followers_count }} Followers</span> |
+          <span class="font-bold">{{ following_count }} Following</span>
         </div>
       </div>
     </div>
 
-    <!-- ปุ่ม Follow/Unfollow -->
+    <!-- Follow/Unfollow Buttons -->
     {% if user != viewed_user %}
       <div class="mt-8 text-center">
         {% if is_following %}
           <form method="post" action="{% url 'unfollow' viewed_user.username %}">
             {% csrf_token %}
-            <button type="submit" class="py-2 px-4 bg-red-500 hover:bg-red-700 text-white font-semibold rounded-lg shadow-md">Unfollow</button>
+            <button type="submit" class="py-2 px-6 bg-red-600 hover:bg-red-800 text-white font-semibold rounded-lg shadow-md transition duration-300">Unfollow</button>
           </form>
         {% else %}
           <form method="post" action="{% url 'follow' viewed_user.username %}">
             {% csrf_token %}
-            <button type="submit" class="py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md">Follow</button>
+            <button type="submit" class="py-2 px-6 bg-blue-500 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md transition duration-300">Follow</button>
           </form>
         {% endif %}
       </div>
     {% endif %}
 
-    <!-- Edit Profile Button (แสดงเมื่อเป็นโปรไฟล์ของตัวเอง) -->
+    <!-- Edit Profile Button (only for the current user's profile) -->
     {% if user == viewed_user %}
       <div class="mt-12 text-center">
-        <a href="{% url 'edit_profile' %}" class="py-3 px-6 bg-blue-500 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md">
+        <a href="{% url 'edit_profile' %}" class="py-3 px-8 bg-blue-500 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md transition duration-300">
           Edit Profile
         </a>
       </div>
     {% endif %}
 
-    <!-- ปุ่มชม Work Gallery -->
+    <!-- Work Gallery Button -->
     <div class="mt-12 text-center">
-      <a href="{% url 'work_gallery' username=viewed_user.username %}" class="py-3 px-6 bg-green-500 hover:bg-green-700 text-white font-semibold rounded-lg shadow-md">
-         Work Gallery
+      <a href="{% url 'work_gallery' username=viewed_user.username %}" class="py-3 px-8 bg-green-500 hover:bg-green-700 text-white font-semibold rounded-lg shadow-md transition duration-300">
+        View Work Gallery
       </a>
     </div>
 

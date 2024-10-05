@@ -134,7 +134,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'orcanihao@gmail.com'  # อีเมลของคุณ
-EMAIL_HOST_PASSWORD = 'sjxbjyyqxegbjenr'  # รหัสผ่านที่สร้างจาก Google App Password
+EMAIL_HOST_PASSWORD = 'sjxb jyyq xegb jenr'  # รหัสผ่านที่สร้างจาก Google App Password
 
 
 

@@ -55,7 +55,7 @@ def submit_image_view(request):
             image = form.save(commit=False)
             image.user = request.user  # Attach the current user to the image
             image.save()
-            return redirect('work_gallery')  # Redirect to the gallery after successful submission
+            return redirect('work_gallery', username=request.user.username)  # Redirect to the gallery after successful submission
     else:
         form = WorkImageForm()
 
@@ -79,11 +79,11 @@ def profile_view(request, username=None):
     # ถ้าไม่มี ให้แสดงโปรไฟล์ของผู้ใช้ที่ล็อกอินอยู่
     if username:
         viewed_user = get_object_or_404(User, username=username)
+        # ตรวจสอบว่าผู้ใช้ที่ดูโปรไฟล์ติดตามผู้ใช้นี้อยู่หรือไม่
+        is_following = Follow.objects.filter(follower=request.user, following=viewed_user).exists()
     else:
         viewed_user = request.user
-
-    # ตรวจสอบว่าผู้ใช้ที่ดูโปรไฟล์ติดตามผู้ใช้นี้อยู่หรือไม่
-    is_following = Follow.objects.filter(follower=request.user, following=viewed_user).exists()
+        is_following = False  # ผู้ใช้ไม่สามารถติดตามตัวเองได้
 
     # สร้างหรือดึง UserProfile ของผู้ใช้นั้น
     profile, created = UserProfile.objects.get_or_create(user=viewed_user)
@@ -101,33 +101,43 @@ def profile_view(request, username=None):
     })
 
 
-
-
 @login_required(login_url='login')
 def profile_edit_view(request):
     user = request.user
     profile, created = UserProfile.objects.get_or_create(user=user)
 
     if request.method == 'POST':
-        # Handle both User and UserProfile updates
-        user_form = UserProfileForm(request.POST, instance=profile)
+        # รับทั้งข้อมูล POST และไฟล์ FILES
+        user_form = UserProfileForm(request.POST, request.FILES, instance=profile)
+
+        # ตรวจสอบ request.FILES เพื่อดูว่ามีการส่งไฟล์รูปภาพหรือไม่
+        print(request.FILES)
+
         if user_form.is_valid():
-            # Update User model fields (username, email)
+            # บันทึกข้อมูลของผู้ใช้
             user.username = user_form.cleaned_data['username']
             user.email = user_form.cleaned_data['email']
-            user.save()  # Save changes to User model
+            user.save()
 
-            # Save changes to UserProfile model
-            user_form.save()
-            return redirect('profile', username=user.username)  # เปลี่ยนเป็นหน้าโปรไฟล์หลังแก้ไข
+            # บันทึกข้อมูลของ UserProfile รวมถึงรูปโปรไฟล์ใหม่
+            profile = user_form.save(commit=False)
+            if 'profile_image' in request.FILES:  # ตรวจสอบว่าไฟล์ถูกอัปโหลดหรือไม่
+                profile.profile_image = request.FILES['profile_image']  # บันทึกไฟล์รูปโปรไฟล์
+            profile.save()
+
+            return redirect('profile', username=user.username)
     else:
-        # Prepopulate form with both User and UserProfile data
+        # Prepopulate form ด้วยข้อมูลที่มีอยู่
         initial_data = {'username': user.username, 'email': user.email}
         user_form = UserProfileForm(instance=profile, initial=initial_data)
 
     return render(request, 'profile_edit.html', {
         'form': user_form,
+        'profile': profile,  # ส่งข้อมูล profile ด้วยสำหรับการแสดงรูปปัจจุบัน
     })
+
+
+
 
 def search_work_gallery_view(request):
     search_query = request.GET.get('search')

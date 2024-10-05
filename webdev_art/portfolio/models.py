@@ -3,14 +3,14 @@ from django.contrib.auth.models import User
 
 
 # Create your models here.
-# accounts/models.py
+
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     quote = models.CharField(max_length=255, blank=True, null=True)
     facebook_url = models.URLField(max_length=200, blank=True, null=True)
     X_url = models.URLField(max_length=200, blank=True, null=True)
     instagram_url = models.URLField(max_length=200, blank=True, null=True)
-
+    profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
     def __str__(self):
         return self.user.username
 
@@ -37,4 +37,4 @@ class Follow(models.Model):
         return f"{self.follower.username} follows {self.following.username}"
 
     class Meta:
-        unique_together = ('follower', 'following')  # เพื่อป้องกันไม่ให้ผู้ใช้ติดตามซ้ำ
+        unique_together = ('follower', 'following')
